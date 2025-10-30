@@ -21,6 +21,7 @@ class Program
         throw new NotImplementedException();
     }
 
+    //CC. Calcula la moda de una colección numérica
     static (double value, int count) Mode(IEnumerable<double> values, int decimals = 2)
     {
         var round_values = values.Select(v => Math.Round(v, decimals));
@@ -29,6 +30,7 @@ class Program
         return first != null ? (first.Key, first.Count()) : (0.0, 0);
     }
 
+    //CC. Calcula la moda de una colección categórica
     static string ModeCategorical(IEnumerable<string> values)
     {
         var valid = values.Where(v => !string.IsNullOrWhiteSpace(v));
@@ -83,6 +85,7 @@ class Program
     /// FICHEROS
     //////////////////////////////////////////////
 
+    //CC. Lee un archivo css y lo divide por filas y valores
     static List<string[]> ReadCsv(string path)
     {
         var rows = new List<string[]>();
@@ -93,6 +96,7 @@ class Program
         return rows;
     }
 
+    //CC. Escribe una matriz de datos para el nuevo 
     static void WriteCsv(string path, List<string[]> outRows)
     {
         using (var writer = new StreamWriter(path, false))
@@ -194,6 +198,8 @@ class Program
         // Ej. {"ID", 0}, {"Edad", 1}, ..., {"Tiempo_Empleo", 7}.
         //////////////////////////////////////////////
 
+
+        //CC. Crea un diccionario con las columnas y sus indices
         var colIndexMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         for (int i = 0; i < header.Length; i++)
         {
@@ -223,6 +229,7 @@ class Program
             "Edad", "Ingresos_Mensuales", "Gastos_Anuales", "Calificacion_Credito", "Tiempo_Empleo",
         ];
 
+        //CC. Calcula la moda de las columnas numericas
         var num_modes = new Dictionary<string, double>();
         foreach (var column_name in numericColumnNames)
         {
@@ -237,6 +244,7 @@ class Program
             "Genero", "Educacion",
         ];
 
+        //CC. Calcula la moda de las columnas categoricas
         var cat_modes = new Dictionary<string, string>();
         foreach (var column_name in categoricalColumnNames)
         {
@@ -282,6 +290,8 @@ class Program
         /// 8º FORMATEAR LA SALIDA
         //////////////////////////////////////////////
 
+
+        //CC. Añade la columna "Ratio_Deuda" al header de salida
         var outHeader = new List<string>(header);
         outHeader.Add("Ratio_Deuda");
 
@@ -290,6 +300,7 @@ class Program
             outHeader.ToArray() // Con la cabecera
         };
 
+        //CC. Añade los valores vacíos utilizando su moda y el valor de la nueva columna "Ratio_Deuda"
         for (int i = 0; i < data.Count; i++)
         {
             var row = new List<string>();
