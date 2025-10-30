@@ -2,6 +2,7 @@
 using System.Text;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
@@ -36,7 +37,7 @@ class Program
     }
 
     //////////////////////////////////////////////
-    /// ESCALAR DATOS NUMERICOS
+    /// ESCALAR DATOS NUMÉRICOS
     //////////////////////////////////////////////
 
     // Min-Max
@@ -87,7 +88,7 @@ class Program
         var rows = new List<string[]>();
         foreach (var line in System.IO.File.ReadLines(path))
         {
-            rows.Add(line.Split(',')); 
+            rows.Add(line.Split(','));
         }
         return rows;
     }
@@ -194,8 +195,10 @@ class Program
         //////////////////////////////////////////////
 
         var colIndexMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        // TODO: Implementar
-
+        for (int i = 0; i < header.Length; i++)
+        {
+            colIndexMap[header[i]] = i;
+        }
 
         //////////////////////////////////////////////
         // ESTE PASO ES OPCIONAL!!
@@ -209,7 +212,7 @@ class Program
         ];
 
         // TODO: Implementar
-
+        
 
         //////////////////////////////////////////////
         // 4º Imputamos valores restantes
@@ -224,7 +227,7 @@ class Program
         foreach (var column_name in numericColumnNames)
         {
             int id = colIndexMap[column_name];
-            var nums = data.Select(row => ToNullableDouble(row[id])).Where(x => x.HasValue).Select(x => x.Value);
+            var nums = data.Select(row => ToNullableDouble(row[id])).Where(x => x.HasValue).Select(x => x!.Value);
             var mode = Mode(nums).value;
             num_modes[column_name] = mode;
         }
@@ -265,27 +268,22 @@ class Program
 
 
         //////////////////////////////////////////////
-        /// 7º GENERACION DE NUEVAS CARACTERISTICAS
+        /// 7º GENERACIÓN DE NUEVAS CARACTERÍSTICAS
         //////////////////////////////////////////////
 
-        // TODO: Ratio_Deuda = Gastos_Anuales / (Ingresos_Mensuales * 12)
         double[] ratio = data.Select(row =>
         {
-            // TODO: Implementar
-            return 0.0;
+            double ingresos = ToNullableDouble(row[colIndexMap["Ingresos_Mensuales"]]) ?? 0.0;
+            double gastos = ToNullableDouble(row[colIndexMap["Gastos_Anuales"]]) ?? 0.0;
+            return ingresos * 12 - gastos;
         }).ToArray();
-
 
         //////////////////////////////////////////////
         /// 8º FORMATEAR LA SALIDA
         //////////////////////////////////////////////
 
-        // Cabecera base: ID + numericas imputadas
-        var outHeader = new List<string>();
-        for (int j = 0; j < header.Length; j++)
-        {
-            outHeader.Add(header[j]);
-        }
+        var outHeader = new List<string>(header);
+        outHeader.Add("Ratio_Deuda");
 
         var outRows = new List<string[]>
         {
@@ -306,9 +304,11 @@ class Program
                 else
                     row.Add(value);
             }
+
+            row.Add(StringToDouble(ratio[i]));
             outRows.Add(row.ToArray());
         }
-
+        
 
         //////////////////////////////////////////////
         /// 9º ESCRIBIMOS EL FICHERO DE SALIDA
