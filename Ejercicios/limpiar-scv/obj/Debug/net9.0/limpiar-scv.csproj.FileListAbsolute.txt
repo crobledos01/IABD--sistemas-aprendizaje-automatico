@@ -1,0 +1,15 @@
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\bin\Debug\net9.0\limpiar-scv.exe
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\bin\Debug\net9.0\limpiar-scv.deps.json
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\bin\Debug\net9.0\limpiar-scv.runtimeconfig.json
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\bin\Debug\net9.0\limpiar-scv.dll
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\bin\Debug\net9.0\limpiar-scv.pdb
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.AssemblyInfoInputs.cache
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.AssemblyInfo.cs
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.csproj.CoreCompileInputs.cache
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.sourcelink.json
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.dll
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\refint\limpiar-scv.dll
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.pdb
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\limpiar-scv.genruntimeconfig.cache
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\limpiar-scv\obj\Debug\net9.0\ref\limpiar-scv.dll
