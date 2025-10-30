@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.IO;
 
 class Program
 {
-    //////////////////////////////////////////////
-    /// IMPUTAR DATOS
-    //////////////////////////////////////////////
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static double Mean(IEnumerable<double> values) => values.Average();
 
@@ -21,14 +18,17 @@ class Program
 
     static (double value, int count) Mode(IEnumerable<double> values, int decimals = 2)
     {
-        // TODO: Implementar
-        throw new NotImplementedException();
+        var round_values = values.Select(v => Math.Round(v, decimals));
+        var groups = round_values.GroupBy(x => x).OrderByDescending(g => g.Count());
+        var first = groups.FirstOrDefault();
+        return first != null ? (first.Key, first.Count()) : (0.0, 0);
     }
 
     static string ModeCategorical(IEnumerable<string> values)
     {
-        // TODO: Implementar
-        throw new NotImplementedException();
+        var valid = values.Where(v => !string.IsNullOrWhiteSpace(v));
+        var groups = valid.GroupBy(x => x).OrderByDescending(g => g.Count());
+        return groups.FirstOrDefault()?.Key ?? "";
     }
 
     //////////////////////////////////////////////
@@ -78,15 +78,20 @@ class Program
         var rows = new List<string[]>();
         foreach (var line in System.IO.File.ReadLines(path))
         {
-            rows.Add(line.Split(',')); // Cambia el separador si tu archivo usa otro
+            rows.Add(line.Split(',')); 
         }
         return rows;
     }
 
     static void WriteCsv(string path, List<string[]> outRows)
     {
-        // TODO: Implementar
-        throw new NotImplementedException();
+        using (var writer = new StreamWriter(path, false))
+        {
+            foreach (var row in outRows)
+            {
+                writer.WriteLine(string.Join(",", row));
+            }
+        }
     }
 
     //////////////////////////////////////////////
@@ -151,13 +156,26 @@ class Program
             "Edad", "Ingresos_Mensuales", "Gastos_Anuales", "Calificacion_Credito", "Tiempo_Empleo",
         };
 
-        // TODO: Implementar
+        var num_modes = new Dictionary<string, double>();
+        foreach (var column_name in numericColumnNames)
+        {
+            int id = colIndexMap[column_name];
+            var nums = data.Select(row => ToNullableDouble(row[id])).Where(x => x.HasValue).Select(x => x.Value);
+            var mode = Mode(nums).value;
+            num_modes[column_name] = mode;
+        }
 
         string[] categoricalColumnNames = {
             "Genero", "Educacion",
         };
 
-        // TODO: Implementar
+        var cat_modes = new Dictionary<string, string>();
+        foreach (var column_name in categoricalColumnNames)
+        {
+            int idx = colIndexMap[column_name];
+            var vals = data.Select(row => Safe(row[idx]));
+            cat_modes[column_name] = ModeCategorical(vals);
+        }
 
         var scaledCols = new Dictionary<string, double[]>();
         // TODO: Implementar
@@ -175,12 +193,10 @@ class Program
         }).ToArray();
 
         var outHeader = new List<string>();
-        // outHeader.Add("ID");
-        // outHeader.AddRange(numericColumnNames);
-        // outHeader.AddRange(genHeaders);
-        // outHeader.AddRange(eduHeaders);
-        // outHeader.Add("Ratio_Deuda");
-        // outHeader.AddRange(scaledCols.Keys);
+        for (int j = 0; j < header.Length; j++)
+        {
+            outHeader.Add(header[j]);
+        }
 
         var outRows = new List<string[]>
         {
@@ -190,16 +206,21 @@ class Program
         for (int i = 0; i < data.Count; i++)
         {
             var row = new List<string>();
-            // TODO: ID
-            // TODO: numericas imputadas
-            // TODO: OHE genero
-            // TODO: OHE educacion
-            // TODO: ratio
-            // TODO: escaladas
+            for (int j = 0; j < header.Length; j++)
+            {
+                string column_name = header[j];
+                string value = Safe(data[i][j]);
+                if (num_modes.ContainsKey(column_name) && (string.IsNullOrEmpty(value) || value.Equals("NaN", StringComparison.OrdinalIgnoreCase)))
+                    row.Add(StringToDouble(num_modes[column_name]));
+                else if (cat_modes.ContainsKey(column_name) && string.IsNullOrEmpty(value))
+                    row.Add(cat_modes[column_name]);
+                else
+                    row.Add(value);
+            }
             outRows.Add(row.ToArray());
         }
 
-        // TODO: WriteCsv
+        WriteCsv(fileOutputPath, outRows);
 
         Console.WriteLine($"OK -> {fileOutputPath}");
     }
