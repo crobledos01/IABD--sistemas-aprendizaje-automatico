@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("limpiar-scv")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0a1b57696156bd0d1c1c960507142374745c8af2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40a358dbbeb98c955caa7f6085c2af3d13b8c934")]
 [assembly: System.Reflection.AssemblyProductAttribute("limpiar-scv")]
 [assembly: System.Reflection.AssemblyTitleAttribute("limpiar-scv")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
