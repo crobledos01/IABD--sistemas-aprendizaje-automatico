@@ -1,0 +1,32 @@
+#@ TextLoader{
+#@   header+
+#@   sep=comma
+#@   col=ID:R4:0
+#@   col=Edad:R4:1
+#@   col=Genero:TX:2
+#@   col=Ingresos_Mensuales:R4:3
+#@   col=Gastos_Anuales:R4:4
+#@   col=Educacion:TX:5
+#@   col=Calificacion_Credito:R4:6
+#@   col=Tiempo_Empleo:R4:7
+#@   col=Ratio_Ahorro:R4:8
+#@   col=Edad_MinMax:R4:9
+#@   col=Ingresos_Mensuales_ZScore:R4:10
+#@   col=Gastos_Anuales_ZScore:R4:11
+#@   col=Calificacion_Credito_MinMax:R4:12
+#@   col=Tiempo_Empleo_MinMax:R4:13
+#@   col=Ratio_Ahorro_MinMax:R4:14
+#@   col=Genero_OneHot:R4:15-16
+#@   col=Educacion_OneHot:R4:17-19
+#@ }
+ID,Edad,Genero,Ingresos_Mensuales,Gastos_Anuales,Educacion,Calificacion_Credito,Tiempo_Empleo,Ratio_Ahorro,Edad_MinMax,Ingresos_Mensuales_ZScore,Gastos_Anuales_ZScore,Calificacion_Credito_MinMax,Tiempo_Empleo_MinMax,Ratio_Ahorro_MinMax,M,F,Secundaria,Licenciatura,Maestria
+1,25,M,3000,20000,Secundaria,650,2,1.8,0,-1.0354915,-0.8091736,0.125,0,0.021594651,1,0,1,0,0
+2,37,F,4500,25000,Licenciatura,720,10,2.16,0.6,0.12943628,0.6620511,1,0.61538464,0.26777416,0,1,0,1,0
+3,33.5,M,5000,22750,Maestria,700,5,2.6373627,0.425,0.51774555,0,0.75,0.23076925,0.59420985,1,0,0,0,1
+4,29,M,3200,18000,Licenciatura,681.25,7,2.1333334,0.2,-0.8801677,-1.3976635,0.515625,0.3846154,0.24953866,1,0,0,1,0
+5,41,F,4333.3335,23000,Secundaria,680,7.4444447,2.2608695,0.8,0,0.073561236,0.5,0.41880345,0.33675185,0,1,1,0,0
+6,34,M,6000,30000,Secundaria,640,12,2.4,0.45000002,1.294364,2.1332757,0,0.7692308,0.43189377,1,0,1,0,0
+7,33.5,F,7000,26000,Secundaria,710,9,3.2307692,0.425,2.0709825,0.956296,0.875,0.53846157,1,0,1,1,0,0
+8,45,M,4000,21000,Maestria,690,15,2.2857144,1,-0.25887296,-0.51492864,0.625,1,0.3537416,1,0,0,0,1
+9,30,F,3500,22750,Licenciatura,681.25,3,1.8461539,0.25,-0.6471822,0,0.515625,0.07692308,0.053156152,0,1,0,1,0
+10,27,M,2800,19000,Secundaria,660,4,1.768421,0.1,-1.1908151,-1.1034185,0.25,0.15384616,6,1:1,3:1
