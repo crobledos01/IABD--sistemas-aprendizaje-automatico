@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MLNET_SAACLENDATASET")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0748b15475d0baa5e5b614c8a2b0b385ad0f9cc5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1099204f67ce49b5c33faa03fd2999df39ff4042")]
 [assembly: System.Reflection.AssemblyProductAttribute("MLNET_SAACLENDATASET")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MLNET_SAACLENDATASET")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
