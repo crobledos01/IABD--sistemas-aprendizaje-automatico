@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
-class ProgramOriginal
+class LimpiarCSV
 {
     //////////////////////////////////////////////
     /// IMPUTAR DATOS
@@ -167,7 +167,7 @@ class ProgramOriginal
     /// Le puse este nombre porque, como nos pasaste el ejercicio hecho,
     /// dividí el archivo en dos y el Program sirve para seleccionar
     /// uno u otro
-    public static void EjecutarProgramaOriginal()
+    public static void Main()
     {
         // Archivo de entrada y salida
         const string fileInputPath = "data.csv";
