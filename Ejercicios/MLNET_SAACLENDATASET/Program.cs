@@ -78,7 +78,8 @@ namespace MLNET_SAACLENDATASET
                 .Append(mlContext.Transforms.NormalizeMinMax(outputColumnName: "Tiempo_Empleo_MinMax", inputColumnName: "Tiempo_Empleo", fixZero: false))
                 .Append(mlContext.Transforms.NormalizeMinMax(outputColumnName: "Ratio_Ahorro_MinMax", inputColumnName: "Ratio_Ahorro", fixZero: false))
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "Genero_OneHot", inputColumnName: "Genero"))
-                .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "Educacion_OneHot", inputColumnName: "Educacion"));
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "Educacion_OneHot", inputColumnName: "Educacion"))
+                .Append(mlContext.Transforms.SelectColumns(["Features"]));
 
             var trasformer = pipeline.Fit(data);
             IDataView transformedData = trasformer.Transform(data);
