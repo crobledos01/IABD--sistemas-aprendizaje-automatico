@@ -604,7 +604,7 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Microsoft.ML >= 4.0.2.3"
+      "Microsoft.ML >= 4.0.3"
     ]
   },
   "packageFolders": {
@@ -652,7 +652,7 @@
         "dependencies": {
           "Microsoft.ML": {
             "target": "Package",
-            "version": "[4.0.2.3, )"
+            "version": "[4.0.3, )"
           }
         },
         "imports": [
@@ -674,17 +674,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "MLNET_SAACLENDATASET depende de Microsoft.ML (>= 4.0.2.3), pero no se encontró Microsoft.ML 4.0.2.3. Microsoft.ML 4.0.3 se resolvió en su lugar.",
-      "libraryId": "Microsoft.ML",
-      "targetGraphs": [
-        "net9.0"
-      ]
-    }
-  ]
+  }
 }

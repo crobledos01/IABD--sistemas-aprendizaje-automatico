@@ -8,7 +8,7 @@ namespace MLNET_SAACLENDATASET
     {
         static void Main()
         {
-            const string fileInputPath = "puntos.csv";
+            const string fileInputPath = "puntos-100.csv";
 
             var mlContext = new MLContext();
 
@@ -16,7 +16,7 @@ namespace MLNET_SAACLENDATASET
             var splitData = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
             var pipeline = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: ["X", "Y",])
-                    .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: 3));
+                    .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: 5));
 
             var model = pipeline.Fit(splitData.TrainSet);
 
@@ -52,6 +52,28 @@ namespace MLNET_SAACLENDATASET
                     var distancesFormatted = string.Join(", ", predictedPoint.Distances);
                     Console.WriteLine($"Punto ({point.X}, {point.Y}) => Cluster {predictedPoint.ClusterId}, Distances: [{distancesFormatted}]");
                 }
+
+            const int KTarget = 6;
+            for (int k = 2; k <= KTarget; k++)
+            {
+                Console.WriteLine("");
+
+                var pipelineK = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: ["X", "Y",])
+                        .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: k));
+
+                var modelK = pipelineK.Fit(splitData.TrainSet);
+
+                var predictionsK = modelK.Transform(splitData.TestSet);
+
+                ClusteringMetrics metricsK = mlContext.Clustering.Evaluate(
+                    data: predictionsK,
+                    scoreColumnName: "Score",
+                    featureColumnName:"Features");
+
+                Console.WriteLine("At kluster = " + k);
+                Console.WriteLine($"Average Distance: {metricsK.AverageDistance:F4}");
+                Console.WriteLine($"Davies-Bouldin Index: {metricsK.DaviesBouldinIndex:F4}");
+            }
         }
     }
 }
@@ -70,5 +92,5 @@ public class PointPrediction
     public uint ClusterId { get; set; }
 
     [ColumnName("Score")]
-    public float[]? Distances { get; set; }
+    public float[] Distances { get; set; } = Array.Empty<float>();
 }

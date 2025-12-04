@@ -124,3 +124,5 @@ C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Eje
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\ClusteringKNN\obj\Debug\net9.0\MLNET_SAACLENDATASET.pdb
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\ClusteringKNN\obj\Debug\net9.0\MLNET_SAACLENDATASET.genruntimeconfig.cache
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\ClusteringKNN\obj\Debug\net9.0\ref\MLNET_SAACLENDATASET.dll
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\ClusteringKNN\bin\Debug\net9.0\puntos-30.csv
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\ClusteringKNN\bin\Debug\net9.0\puntos-100.csv
