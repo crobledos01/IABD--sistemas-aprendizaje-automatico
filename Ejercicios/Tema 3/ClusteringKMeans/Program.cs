@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 
@@ -15,18 +17,18 @@ namespace ClusteringKMeans
             IDataView data = mlContext.Data.LoadFromTextFile<Clients>(path: fileInputPath, separatorChar: ',', hasHeader: true);
             var splitData = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
-            var minorMetrick = double.NaN;
+            double minorMetric = double.NaN;
             var bestK = 2;
             const int KTarget = 6;
 
             for (int k = bestK; k <= KTarget; k++)
             {
-                Console.WriteLine("");
+                Console.WriteLine();
 
-                var pipelineK = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames:new[]
-                { "IdCliente", "Edad", "NochesPorEstancia", "ViajaConNinos",
-                          "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"})
-                        .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: k));
+                var pipelineK = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: new[]
+                { "Edad", "NochesPorEstancia", "ViajaConNinos",
+                                "GastoMedio", "DistanciaKm", "ReservasUltimoAnio" })
+                    .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: k));
 
                 var modelK = pipelineK.Fit(splitData.TrainSet);
 
@@ -37,67 +39,58 @@ namespace ClusteringKMeans
                     scoreColumnName: "Score",
                     featureColumnName: "Features");
 
-                Console.WriteLine("At kluster = " + k);
-                Console.WriteLine($"Average Distance: {metricsK.AverageDistance:F4}");
-                Console.WriteLine($"Davies-Bouldin Index: {metricsK.DaviesBouldinIndex:F4}");
+                // Console.WriteLine("At kluster = " + k);
+                // Console.WriteLine($"Average Distance: {metricsK.AverageDistance:F4}");
+                // Console.WriteLine($"Davies-Bouldin Index: {metricsK.DaviesBouldinIndex:F4}");
 
-                var metricksSumatory = metricsK.AverageDistance + metricsK.DaviesBouldinIndex;
+                var metricSumatory = metricsK.AverageDistance + metricsK.DaviesBouldinIndex;
 
-                if (double.IsNaN(minorMetrick) || metricksSumatory < minorMetrick)
+                if (double.IsNaN(minorMetric) || metricSumatory < minorMetric)
                 {
-                    minorMetrick = metricksSumatory;
+                    minorMetric = metricSumatory;
                     bestK = k;
                 }
             }
 
-
+            
             var finalPipeline = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: new[] {
-                "IdCliente", "Edad", "NochesPorEstancia", "ViajaConNinos", "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"})
+                "Edad", "NochesPorEstancia", "ViajaConNinos", "GastoMedio", "DistanciaKm", "ReservasUltimoAnio" })
+                    .Append(mlContext.Transforms.NormalizeMinMax("Features"))
                     .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: bestK));
 
-            var model = finalPipeline.Fit(splitData.TrainSet);
+            var finalModel = finalPipeline.Fit(splitData.TrainSet);
+            var finalPredictions = finalModel.Transform(splitData.TestSet);
 
-            var predictions = model.Transform(splitData.TestSet);
+            var finalMetrics = mlContext.Clustering.Evaluate(finalPredictions);
 
-            ClusteringMetrics metrics = mlContext.Clustering.Evaluate(
-                data: predictions,
-                scoreColumnName: "Score",
-                featureColumnName: "Features");
+            Console.WriteLine("=== Métricas ===");
+            Console.WriteLine($"Average Distance: {finalMetrics.AverageDistance:F4}");
+            Console.WriteLine($"Davies-Bouldin Index: {finalMetrics.DaviesBouldinIndex:F4}");
+            Console.WriteLine($"Normalized Mutual Information: {finalMetrics.NormalizedMutualInformation:F4}");
 
+            var engine = mlContext.Model.CreatePredictionEngine<Clients, ClusterPrediction>(finalModel);
 
-            Console.WriteLine($"Average Distance: {metrics.AverageDistance:F4}");
-            Console.WriteLine($"Davies-Bouldin Index: {metrics.DaviesBouldinIndex:F4}");
-            Console.WriteLine($"Normalized Mutual Information: {metrics.NormalizedMutualInformation:F4}");
+            var clientes = mlContext.Data
+                .CreateEnumerable<Clients>(data, reuseRowObject: false)
+                .ToList();
 
-            var engine = mlContext.Model.CreatePredictionEngine<Clients, ClusterPrediction>(model);
-
-            var clientes = mlContext.Data.CreateEnumerable<Clients>(data,
-            reuseRowObject: false).ToList();
-            // 2.
             var resultados = new List<(Clients Cliente, uint ClusterId)>();
-            // 3.
+
             foreach (var c in clientes)
             {
                 var pred = engine.Predict(c);
-                resultados.Add((c, pred.PredictedLabel));
+                resultados.Add((c, pred.ClusterId));
             }
-            // 4.
+
             foreach (var grp in resultados.GroupBy(r => r.ClusterId))
             {
-                Console.WriteLine($"\nCluster {grp.Key}");
-                // 5.
-                Console.WriteLine($" Edad media: {grp.Average(r =>
-                r.Cliente.Edad):F1}");
-                Console.WriteLine($" Noches por estancia: {grp.Average(r =>
-                r.Cliente.NochesPorEstancia):F1}");
-                Console.WriteLine($" % que viaja con niños: {grp.Average(r =>
-                r.Cliente.ViajaConNinos) * 100:F1}%");
-                Console.WriteLine($" Gasto medio: {grp.Average(r =>
-                r.Cliente.GastoMedio):F0} €");
-                Console.WriteLine($" Distancia media: {grp.Average(r =>
-                r.Cliente.DistanciaKm):F0} km");
-                Console.WriteLine($" Reservas último año: {grp.Average(r =>
-                r.Cliente.ReservasUltimoAnio):F1}");
+                Console.WriteLine($"\n======= Cluster {grp.Key} =======");
+                Console.WriteLine($" Edad media: {grp.Average(r => r.Cliente.Edad):F1}");
+                Console.WriteLine($" Noches por estancia: {grp.Average(r => r.Cliente.NochesPorEstancia):F1}");
+                Console.WriteLine($" % que viaja con niños: {grp.Average(r => r.Cliente.ViajaConNinos) * 100:F1}%");
+                Console.WriteLine($" Gasto medio: {grp.Average(r => r.Cliente.GastoMedio):F0} €");
+                Console.WriteLine($" Distancia media: {grp.Average(r => r.Cliente.DistanciaKm):F0} km");
+                Console.WriteLine($" Reservas último año: {grp.Average(r => r.Cliente.ReservasUltimoAnio):F1}");
             }
         }
     }
@@ -105,20 +98,20 @@ namespace ClusteringKMeans
 
 public class Clients
 {
+    [LoadColumn(0)]
+    public float IdCliente { get; set; }
     [LoadColumn(1)]
-    public float IdCliente { get; set; } = float.NaN;
+    public float Edad { get; set; }
     [LoadColumn(2)]
-    public float Edad { get; set; } = float.NaN;
+    public float NochesPorEstancia { get; set; }
     [LoadColumn(3)]
-    public float NochesPorEstancia { get; set; } = float.NaN;
+    public float ViajaConNinos { get; set; }
     [LoadColumn(4)]
-    public float ViajaConNinos { get; set; } = float.NaN;
+    public float GastoMedio { get; set; }
     [LoadColumn(5)]
-    public float GastoMedio { get; set; } = float.NaN;
+    public float DistanciaKm { get; set; }
     [LoadColumn(6)]
-    public float DistanciaKm { get; set; } = float.NaN;
-    [LoadColumn(7)]
-    public float ReservasUltimoAnio { get; set; } = float.NaN;
+    public float ReservasUltimoAnio { get; set; }
 }
 
 public class ClusterPrediction
