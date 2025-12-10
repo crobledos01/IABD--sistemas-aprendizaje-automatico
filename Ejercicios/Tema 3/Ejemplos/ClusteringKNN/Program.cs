@@ -12,16 +12,21 @@ namespace MLNET_SAACLENDATASET
 
             var mlContext = new MLContext();
 
+            //Recoge qué parte del scv se va a utilizar para entrenamiento del modelo
             IDataView data = mlContext.Data.LoadFromTextFile<Point>(path: fileInputPath, separatorChar: ',', hasHeader: true);
             var splitData = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
+            //Transforma los datos y los añade a los cluster, hay que indicar la cantidad de clusters
             var pipeline = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: ["X", "Y",])
                     .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: 5));
 
+            //Crea el modelo a partir del pipeline
             var model = pipeline.Fit(splitData.TrainSet);
 
+            //Transforma los datos
             var predictions = model.Transform(splitData.TestSet);
 
+            //Crea las métricas de evaluacion
             ClusteringMetrics metrics = mlContext.Clustering.Evaluate(
                 data: predictions,
                 scoreColumnName: "Score",
@@ -34,8 +39,10 @@ namespace MLNET_SAACLENDATASET
             // Valores altos mejor. Solo si le indicamos el Label. No lo convierte en supervisado, por lo que devolverá NaN si no le das los resultados esperados
             Console.WriteLine($"Normalized Mutual Information: {metrics.NormalizedMutualInformation:F4}");
 
+            //Crea el motor de predicción a partir del modelo
             var engine = mlContext.Model.CreatePredictionEngine<Point, PointPrediction>(model);
 
+            //Ejemplos de posibles puntos para ver a qué cluster manda cada uno
             Point[] pointsToPredict= [
                 new Point { X = 1, Y = 1},
                 new Point { X = 5, Y = 5},
@@ -43,8 +50,10 @@ namespace MLNET_SAACLENDATASET
                 new Point { X = 10, Y = 1},
             ];
 
+            //Crea una clase
             PointPrediction predictedPoint;
 
+            //Identificación de los puntos, el claster al que pertenece cada uno y sus distancias
             foreach (var point in pointsToPredict)
                 {
                     predictedPoint = engine.Predict(point);
@@ -53,6 +62,7 @@ namespace MLNET_SAACLENDATASET
                     Console.WriteLine($"Punto ({point.X}, {point.Y}) => Cluster {predictedPoint.ClusterId}, Distances: [{distancesFormatted}]");
                 }
 
+            //Da los resultados de varios K
             const int KTarget = 6;
             for (int k = 2; k <= KTarget; k++)
             {

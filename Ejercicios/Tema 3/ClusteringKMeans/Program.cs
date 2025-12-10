@@ -15,7 +15,7 @@ namespace ClusteringKMeans
             IDataView data = mlContext.Data.LoadFromTextFile<Clients>(path: fileInputPath, separatorChar: ',', hasHeader: true);
             var splitData = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
-            var minorMetrick = float.NaN;
+            var minorMetrick = double.NaN;
             var bestK = 2;
             const int KTarget = 6;
 
@@ -23,7 +23,9 @@ namespace ClusteringKMeans
             {
                 Console.WriteLine("");
 
-                var pipelineK = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: ["IdCliente" ,"Edad" ,"NochesPorEstancia" ,"ViajaConNinos" , "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"])
+                var pipelineK = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames:new[]
+                { "IdCliente", "Edad", "NochesPorEstancia", "ViajaConNinos",
+                          "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"})
                         .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: k));
 
                 var modelK = pipelineK.Fit(splitData.TrainSet);
@@ -33,7 +35,7 @@ namespace ClusteringKMeans
                 ClusteringMetrics metricsK = mlContext.Clustering.Evaluate(
                     data: predictionsK,
                     scoreColumnName: "Score",
-                    featureColumnName:"Features");
+                    featureColumnName: "Features");
 
                 Console.WriteLine("At kluster = " + k);
                 Console.WriteLine($"Average Distance: {metricsK.AverageDistance:F4}");
@@ -41,10 +43,61 @@ namespace ClusteringKMeans
 
                 var metricksSumatory = metricsK.AverageDistance + metricsK.DaviesBouldinIndex;
 
-                if (minorMetrick == float.NaN || metricksSumatory < minorMetrick)
+                if (double.IsNaN(minorMetrick) || metricksSumatory < minorMetrick)
                 {
+                    minorMetrick = metricksSumatory;
                     bestK = k;
                 }
+            }
+
+
+            var finalPipeline = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: new[] {
+                "IdCliente", "Edad", "NochesPorEstancia", "ViajaConNinos", "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"})
+                    .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: bestK));
+
+            var model = finalPipeline.Fit(splitData.TrainSet);
+
+            var predictions = model.Transform(splitData.TestSet);
+
+            ClusteringMetrics metrics = mlContext.Clustering.Evaluate(
+                data: predictions,
+                scoreColumnName: "Score",
+                featureColumnName: "Features");
+
+
+            Console.WriteLine($"Average Distance: {metrics.AverageDistance:F4}");
+            Console.WriteLine($"Davies-Bouldin Index: {metrics.DaviesBouldinIndex:F4}");
+            Console.WriteLine($"Normalized Mutual Information: {metrics.NormalizedMutualInformation:F4}");
+
+            var engine = mlContext.Model.CreatePredictionEngine<Clients, ClusterPrediction>(model);
+
+            var clientes = mlContext.Data.CreateEnumerable<Clients>(data,
+            reuseRowObject: false).ToList();
+            // 2.
+            var resultados = new List<(Clients Cliente, uint ClusterId)>();
+            // 3.
+            foreach (var c in clientes)
+            {
+                var pred = engine.Predict(c);
+                resultados.Add((c, pred.PredictedLabel));
+            }
+            // 4.
+            foreach (var grp in resultados.GroupBy(r => r.ClusterId))
+            {
+                Console.WriteLine($"\nCluster {grp.Key}");
+                // 5.
+                Console.WriteLine($" Edad media: {grp.Average(r =>
+                r.Cliente.Edad):F1}");
+                Console.WriteLine($" Noches por estancia: {grp.Average(r =>
+                r.Cliente.NochesPorEstancia):F1}");
+                Console.WriteLine($" % que viaja con niños: {grp.Average(r =>
+                r.Cliente.ViajaConNinos) * 100:F1}%");
+                Console.WriteLine($" Gasto medio: {grp.Average(r =>
+                r.Cliente.GastoMedio):F0} €");
+                Console.WriteLine($" Distancia media: {grp.Average(r =>
+                r.Cliente.DistanciaKm):F0} km");
+                Console.WriteLine($" Reservas último año: {grp.Average(r =>
+                r.Cliente.ReservasUltimoAnio):F1}");
             }
         }
     }
