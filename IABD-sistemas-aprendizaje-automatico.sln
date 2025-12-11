@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tema 3", "Tema 3", "{55BD7F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClusteringKMeans", "Ejercicios\Tema 3\ClusteringKMeans\ClusteringKMeans.csproj", "{5499D439-B241-4662-8D86-9B0C10D1FE24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMeansConPCA", "KMeansConPCA.csproj", "{D24458A6-A85D-41FD-9100-43BD7D2F7D21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
