@@ -18,17 +18,20 @@ namespace ClusteringKMeans
             var splitData = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
             double minorMetric = double.NaN;
-            var bestK = 2;
+            var bestK = 3;
             const int KTarget = 6;
 
             for (int k = bestK; k <= KTarget; k++)
             {
                 Console.WriteLine();
 
-                var pipelineK = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: new[]
-                { "Edad", "NochesPorEstancia", "ViajaConNinos",
-                                "GastoMedio", "DistanciaKm", "ReservasUltimoAnio" })
-                    .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: k));
+                var pipelineK = mlContext.Transforms.Concatenate("Features", new[]
+                {
+                    "Edad", "NochesPorEstancia", "ViajaConNinos",
+                    "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"
+                })
+                .Append(mlContext.Transforms.NormalizeMinMax("Features"))
+                .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: k));
 
                 var modelK = pipelineK.Fit(splitData.TrainSet);
 
@@ -52,11 +55,11 @@ namespace ClusteringKMeans
                 }
             }
 
-            
-            var finalPipeline = mlContext.Transforms.Concatenate(outputColumnName: "Features", inputColumnNames: new[] {
-                "Edad", "NochesPorEstancia", "ViajaConNinos", "GastoMedio", "DistanciaKm", "ReservasUltimoAnio" })
-                    .Append(mlContext.Transforms.NormalizeMinMax("Features"))
-                    .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: bestK));
+            var finalPipeline = mlContext.Transforms.Concatenate("Features", new[] {
+                "Edad", "NochesPorEstancia", "ViajaConNinos",
+                "GastoMedio", "DistanciaKm", "ReservasUltimoAnio" })
+                .Append(mlContext.Transforms.NormalizeMinMax("Features"))
+                .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: bestK));
 
             var finalModel = finalPipeline.Fit(splitData.TrainSet);
             var finalPredictions = finalModel.Transform(splitData.TestSet);
@@ -88,7 +91,7 @@ namespace ClusteringKMeans
                 Console.WriteLine($" Edad media: {grp.Average(r => r.Cliente.Edad):F1}");
                 Console.WriteLine($" Noches por estancia: {grp.Average(r => r.Cliente.NochesPorEstancia):F1}");
                 Console.WriteLine($" % que viaja con niños: {grp.Average(r => r.Cliente.ViajaConNinos) * 100:F1}%");
-                Console.WriteLine($" Gasto medio: {grp.Average(r => r.Cliente.GastoMedio):F0} €");
+                Console.WriteLine($" Gasto medio: {grp.Average(r => r.Cliente.GastoMedio):F0}€");
                 Console.WriteLine($" Distancia media: {grp.Average(r => r.Cliente.DistanciaKm):F0} km");
                 Console.WriteLine($" Reservas último año: {grp.Average(r => r.Cliente.ReservasUltimoAnio):F1}");
             }
@@ -98,8 +101,6 @@ namespace ClusteringKMeans
 
 public class Clients
 {
-    [LoadColumn(0)]
-    public float IdCliente { get; set; }
     [LoadColumn(1)]
     public float Edad { get; set; }
     [LoadColumn(2)]

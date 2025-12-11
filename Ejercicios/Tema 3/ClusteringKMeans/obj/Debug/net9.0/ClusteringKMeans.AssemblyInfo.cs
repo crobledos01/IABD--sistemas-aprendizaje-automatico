@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ClusteringKMeans")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+00c8e417d17189b506a2173a2ee82017d7a1ba7b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c5b0381d8d04dca2d6e26bfddfb7325e52fa901e")]
 [assembly: System.Reflection.AssemblyProductAttribute("ClusteringKMeans")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClusteringKMeans")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
