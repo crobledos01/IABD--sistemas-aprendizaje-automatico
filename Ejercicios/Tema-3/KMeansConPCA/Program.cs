@@ -55,16 +55,31 @@ namespace KMeansConPCA
                 }
             }
 
+            // int bestPCA = FindBestPCA(mlContext, splitData, bestK, minComponents: 2, maxComponents: 5);
+            // Console.WriteLine($"\n✔ Mejor número de componentes PCA: {bestPCA}\n");
+
             var finalPipeline = mlContext.Transforms.Concatenate("Features", new[] {
                 "Edad", "NochesPorEstancia", "ViajaConNinos",
-                "GastoMedio", "DistanciaKm", "ReservasUltimoAnio" })
-                .Append(mlContext.Transforms.NormalizeMinMax("Features"))
-                .Append(mlContext.Clustering.Trainers.KMeans(numberOfClusters: bestK));
+                "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"
+            })
+            .Append(mlContext.Transforms.NormalizeMinMax("Features"))
+            // .Append(mlContext.Transforms.ProjectToPrincipalComponents(
+            //     outputColumnName: "PCAFeatures",
+            //     inputColumnName: "Features",
+            //     rank: bestPCA))
+            .Append(mlContext.Clustering.Trainers.KMeans(
+                numberOfClusters: bestK
+                // featureColumnName: "PCAFeatures"
+                ));
 
             var finalModel = finalPipeline.Fit(splitData.TrainSet);
             var finalPredictions = finalModel.Transform(splitData.TestSet);
 
-            var finalMetrics = mlContext.Clustering.Evaluate(finalPredictions);
+            var finalMetrics = mlContext.Clustering.Evaluate(
+                finalPredictions,
+                scoreColumnName: "Score"
+                // featureColumnName: "PCAFeatures"
+                );
 
             Console.WriteLine("=== Métricas ===");
             Console.WriteLine($"Average Distance: {finalMetrics.AverageDistance:F4}");
@@ -96,30 +111,73 @@ namespace KMeansConPCA
                 Console.WriteLine($" Reservas último año: {grp.Average(r => r.Cliente.ReservasUltimoAnio):F1}");
             }
         }
+
+        // static int FindBestPCA(MLContext mlContext, TrainTestData splitData, int kClusters, int minComponents, int maxComponents)
+        // {
+        //     double minorMetric = double.NaN;
+        //     int bestPCA = minComponents;
+
+        //     for (int rank = minComponents; rank <= maxComponents; rank++)
+        //     {
+        //         var pipeline = mlContext.Transforms.Concatenate("Features", new[]
+        //         {
+        //             "Edad", "NochesPorEstancia", "ViajaConNinos",
+        //             "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"
+        //         })
+        //         .Append(mlContext.Transforms.NormalizeMinMax("Features"))
+        //         .Append(mlContext.Transforms.ProjectToPrincipalComponents(
+        //             outputColumnName: "PCAFeatures",
+        //             inputColumnName: "Features",
+        //             rank: rank))
+        //         .Append(mlContext.Clustering.Trainers.KMeans(
+        //             numberOfClusters: kClusters,
+        //             featureColumnName: "PCAFeatures"));
+
+        //         var model = pipeline.Fit(splitData.TrainSet);
+        //         var predictions = model.Transform(splitData.TestSet);
+
+        //         var metrics = mlContext.Clustering.Evaluate(
+        //             predictions,
+        //             scoreColumnName: "Score",
+        //             featureColumnName: "PCAFeatures");
+
+        //         double metricSum = metrics.AverageDistance + metrics.DaviesBouldinIndex;
+
+        //         Console.WriteLine($"PCA Rank={rank} → AvgDist={metrics.AverageDistance:F4}, DBI={metrics.DaviesBouldinIndex:F4}");
+
+        //         if (double.IsNaN(minorMetric) || metricSum < minorMetric)
+        //         {
+        //             minorMetric = metricSum;
+        //             bestPCA = rank;
+        //         }
+        //     }
+
+        //     return bestPCA;
+        //}
     }
-}
 
-public class Clients
-{
-    [LoadColumn(1)]
-    public float Edad { get; set; }
-    [LoadColumn(2)]
-    public float NochesPorEstancia { get; set; }
-    [LoadColumn(3)]
-    public float ViajaConNinos { get; set; }
-    [LoadColumn(4)]
-    public float GastoMedio { get; set; }
-    [LoadColumn(5)]
-    public float DistanciaKm { get; set; }
-    [LoadColumn(6)]
-    public float ReservasUltimoAnio { get; set; }
-}
+    public class Clients
+    {
+        [LoadColumn(1)]
+        public float Edad { get; set; }
+        [LoadColumn(2)]
+        public float NochesPorEstancia { get; set; }
+        [LoadColumn(3)]
+        public float ViajaConNinos { get; set; }
+        [LoadColumn(4)]
+        public float GastoMedio { get; set; }
+        [LoadColumn(5)]
+        public float DistanciaKm { get; set; }
+        [LoadColumn(6)]
+        public float ReservasUltimoAnio { get; set; }
+    }
 
-public class ClusterPrediction
-{
-    [ColumnName("PredictedLabel")]
-    public uint ClusterId { get; set; }
+    public class ClusterPrediction
+    {
+        [ColumnName("PredictedLabel")]
+        public uint ClusterId { get; set; }
 
-    [ColumnName("Score")]
-    public float[] Distances { get; set; } = Array.Empty<float>();
+        [ColumnName("Score")]
+        public float[] Distances { get; set; } = Array.Empty<float>();
+    }
 }
