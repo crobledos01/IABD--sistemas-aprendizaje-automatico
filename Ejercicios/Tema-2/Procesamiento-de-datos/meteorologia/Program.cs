@@ -17,7 +17,7 @@ namespace meteorologia
             {
                 new TextLoader.Column("Fecha", DataKind.String, 0),
                 new TextLoader.Column("Temperatura_C", DataKind.Single, 1),
-                new TextLoader.Column("Humedad_%", DataKind.Single, 2),
+                new TextLoader.Column("Humedad", DataKind.Single, 2),
                 new TextLoader.Column("Tipo_de_Clima", DataKind.String, 3),
                 new TextLoader.Column("Velocidad_Viento_kmh", DataKind.Single, 4),
                 new TextLoader.Column("Precipitacion_mm", DataKind.Single, 5),
@@ -39,16 +39,17 @@ namespace meteorologia
 
             var rows = mlContext.Data.CreateEnumerable<dataModel>(data, false).ToList();
 
-            var energyGeneratedMapping = MLContext.Transforms.CustomMapping<InputEnergy, OutputEnergy>((input, output) =>
-            {
-                if (input.Temperatura_C < -10 || input.Precipitacion_mm > 10)
+            var energyGeneratedMapping = mlContext.Transforms.CustomMapping<InputEnergy, OutputEnergy>((input, output) =>
                 {
-                    output.Energia_Generada = 0;
-                } else
-                {
-                    output.Energia_Generada = Velocidad_Viento_kmh ** 3;
-                }
-            });
+                    if (input.Temperatura_C < -10 || input.Precipitacion_mm > 10)
+                    {
+                        output.Energia_Generada = 0;
+                    } else
+                    {
+                        output.Energia_Generada = (float)Math.Pow(input.Velocidad_Viento_kmh, 3);
+
+                    }
+                }, contractName: "CustomMappingEnergyGenerated");
 
             var pipeline = mlContext.Transforms.ReplaceMissingValues(outputColumnName: "Temperatura_C", inputColumnName: "Temperatura_C", replacementMode: Microsoft.ML.Transforms.MissingValueReplacingEstimator.ReplacementMode.Mean)
                 .Append(mlContext.Transforms.ReplaceMissingValues(outputColumnName: "Humedad", inputColumnName: "Humedad", replacementMode: Microsoft.ML.Transforms.MissingValueReplacingEstimator.ReplacementMode.Mean))
@@ -61,6 +62,7 @@ namespace meteorologia
                 .Append(mlContext.Transforms.NormalizeMinMax(outputColumnName: "Velocidad_Viento_kmh_MinMax", inputColumnName: "Velocidad_Viento_kmh", fixZero: false))
                 .Append(mlContext.Transforms.NormalizeMinMax(outputColumnName: "Precipitacion_mm_MinMax", inputColumnName: "Precipitacion_mm", fixZero: false))
                 .Append(mlContext.Transforms.NormalizeMinMax(outputColumnName: "Presion_hPa_MinMax", inputColumnName: "Presion_hPa", fixZero: false))
+                .Append(mlContext.Transforms.NormalizeMinMax(outputColumnName: "Energia_Generada_MinMax", inputColumnName: "Energia_Generada", fixZero: false))
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "Fecha_OneHot", inputColumnName: "Fecha"))
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "Tipo_de_Clima_OneHot", inputColumnName: "Tipo_de_Clima"))
                 .Append(mlContext.Transforms.SelectColumns(["Features"]));
@@ -83,7 +85,10 @@ public class InputEnergy
     public float Precipitacion_mm { get; set; } = float.NaN;
     public float Temperatura_C { get; set; } = float.NaN;
 }
-
+public class OutputEnergy
+{
+    public float Energia_Generada { get; set; } = float.NaN;
+}
 public class dataModel
 {
     public string Fecha { get; set; } = string.Empty;

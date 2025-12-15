@@ -1,4 +1,4 @@
-Fecha,Temperatura_C,Humedad_%,Tipo_de_Clima,Velocidad_Viento_kmh,Precipitacion_mm,Presion_hPa
+Fecha,Temperatura_C,Humedad,Tipo_de_Clima,Velocidad_Viento_kmh,Precipitacion_mm,Presion_hPa
 2024-01-01,14.84,72.0,Lluvioso,26,5,1004.84
 2024-01-02,17.35,,Nublado,20,0,1019.32
 2024-01-03,,58.0,Nublado,9,15,1002.0
