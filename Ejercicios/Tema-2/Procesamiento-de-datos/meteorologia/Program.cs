@@ -65,6 +65,8 @@ namespace meteorologia
                 .Append(mlContext.Transforms.NormalizeMinMax(outputColumnName: "Energia_Generada_MinMax", inputColumnName: "Energia_Generada", fixZero: false))
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "Fecha_OneHot", inputColumnName: "Fecha"))
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "Tipo_de_Clima_OneHot", inputColumnName: "Tipo_de_Clima"))
+                .Append(mlContext.Transforms.Concatenate("Features", ["Temperatura_C_ZScore", "Humedad_MinMax", "Velocidad_Viento_kmh_MinMax",
+                                                            "Precipitacion_mm_MinMax", "Presion_hPa_MinMax", "Energia_Generada_MinMax", "Fecha_OneHot", "Tipo_de_Clima_OneHot"]))
                 .Append(mlContext.Transforms.SelectColumns(["Features"]));
                 
             var trasformer = pipeline.Fit(data);
