@@ -1,3 +1,9 @@
+dotnet new console -o nombre
 dotnet new sln -n nombre
 dotnet sln nombre.sln add nombre.csproj
 dotnet run
+
+
+NormalizeMeanVariance --> media de 0, mínimo -1, máximo 1
+OneHotEncoding  --> pasa textos a 1, 2, 3...
+NormalizeMinMax --> entre 0 y 1

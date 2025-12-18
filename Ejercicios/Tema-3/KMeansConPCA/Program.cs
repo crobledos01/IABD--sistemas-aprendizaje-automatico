@@ -55,21 +55,21 @@ namespace KMeansConPCA
                 }
             }
 
-            // int bestPCA = FindBestPCA(mlContext, splitData, bestK, minComponents: 2, maxComponents: 5);
-            // Console.WriteLine($"\n✔ Mejor número de componentes PCA: {bestPCA}\n");
+            int bestPCA = FindBestPCA(mlContext, splitData, bestK, minComponents: 2, maxComponents: 5);
+            Console.WriteLine($"Mejor número de componentes PCA: {bestPCA}");
 
             var finalPipeline = mlContext.Transforms.Concatenate("Features", new[] {
                 "Edad", "NochesPorEstancia", "ViajaConNinos",
                 "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"
             })
             .Append(mlContext.Transforms.NormalizeMinMax("Features"))
-            // .Append(mlContext.Transforms.ProjectToPrincipalComponents(
-            //     outputColumnName: "PCAFeatures",
-            //     inputColumnName: "Features",
-            //     rank: bestPCA))
+            .Append(mlContext.Transforms.ProjectToPrincipalComponents(
+                outputColumnName: "PCAFeatures",
+                inputColumnName: "Features",
+                rank: bestPCA))
             .Append(mlContext.Clustering.Trainers.KMeans(
-                numberOfClusters: bestK
-                // featureColumnName: "PCAFeatures"
+                numberOfClusters: bestK,
+                featureColumnName: "PCAFeatures"
                 ));
 
             var finalModel = finalPipeline.Fit(splitData.TrainSet);
@@ -77,8 +77,8 @@ namespace KMeansConPCA
 
             var finalMetrics = mlContext.Clustering.Evaluate(
                 finalPredictions,
-                scoreColumnName: "Score"
-                // featureColumnName: "PCAFeatures"
+                scoreColumnName: "Score",
+                featureColumnName: "PCAFeatures"
                 );
 
             Console.WriteLine("=== Métricas ===");
@@ -112,48 +112,48 @@ namespace KMeansConPCA
             }
         }
 
-        // static int FindBestPCA(MLContext mlContext, TrainTestData splitData, int kClusters, int minComponents, int maxComponents)
-        // {
-        //     double minorMetric = double.NaN;
-        //     int bestPCA = minComponents;
+        static int FindBestPCA(MLContext mlContext, DataOperationsCatalog.TrainTestData splitData, int kClusters, int minComponents, int maxComponents)
+        {
+            double minorMetric = double.NaN;
+            int bestPCA = minComponents;
 
-        //     for (int rank = minComponents; rank <= maxComponents; rank++)
-        //     {
-        //         var pipeline = mlContext.Transforms.Concatenate("Features", new[]
-        //         {
-        //             "Edad", "NochesPorEstancia", "ViajaConNinos",
-        //             "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"
-        //         })
-        //         .Append(mlContext.Transforms.NormalizeMinMax("Features"))
-        //         .Append(mlContext.Transforms.ProjectToPrincipalComponents(
-        //             outputColumnName: "PCAFeatures",
-        //             inputColumnName: "Features",
-        //             rank: rank))
-        //         .Append(mlContext.Clustering.Trainers.KMeans(
-        //             numberOfClusters: kClusters,
-        //             featureColumnName: "PCAFeatures"));
+            for (int rank = minComponents; rank <= maxComponents; rank++)
+            {
+                var pipeline = mlContext.Transforms.Concatenate("Features", new[]
+                {
+                    "Edad", "NochesPorEstancia", "ViajaConNinos",
+                    "GastoMedio", "DistanciaKm", "ReservasUltimoAnio"
+                })
+                .Append(mlContext.Transforms.NormalizeMinMax("Features"))
+                .Append(mlContext.Transforms.ProjectToPrincipalComponents(
+                    outputColumnName: "PCAFeatures",
+                    inputColumnName: "Features",
+                    rank: rank))
+                .Append(mlContext.Clustering.Trainers.KMeans(
+                    numberOfClusters: kClusters,
+                    featureColumnName: "PCAFeatures"));
 
-        //         var model = pipeline.Fit(splitData.TrainSet);
-        //         var predictions = model.Transform(splitData.TestSet);
+                var model = pipeline.Fit(splitData.TrainSet);
+                var predictions = model.Transform(splitData.TestSet);
 
-        //         var metrics = mlContext.Clustering.Evaluate(
-        //             predictions,
-        //             scoreColumnName: "Score",
-        //             featureColumnName: "PCAFeatures");
+                var metrics = mlContext.Clustering.Evaluate(
+                    predictions,
+                    scoreColumnName: "Score",
+                    featureColumnName: "PCAFeatures");
 
-        //         double metricSum = metrics.AverageDistance + metrics.DaviesBouldinIndex;
+                double metricSum = metrics.AverageDistance + metrics.DaviesBouldinIndex;
 
-        //         Console.WriteLine($"PCA Rank={rank} → AvgDist={metrics.AverageDistance:F4}, DBI={metrics.DaviesBouldinIndex:F4}");
+                Console.WriteLine($"PCA Rank={rank} → AvgDist={metrics.AverageDistance:F4}, DBI={metrics.DaviesBouldinIndex:F4}");
 
-        //         if (double.IsNaN(minorMetric) || metricSum < minorMetric)
-        //         {
-        //             minorMetric = metricSum;
-        //             bestPCA = rank;
-        //         }
-        //     }
+                if (double.IsNaN(minorMetric) || metricSum < minorMetric)
+                {
+                    minorMetric = metricSum;
+                    bestPCA = rank;
+                }
+            }
 
-        //     return bestPCA;
-        //}
+            return bestPCA;
+        }
     }
 
     public class Clients
