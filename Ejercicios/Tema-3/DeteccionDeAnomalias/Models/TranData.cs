@@ -8,28 +8,28 @@ public class TranData
     public float idTran { get; set; }
 
     [LoadColumn(1)]
-    public float idUser { get; set; }
+    public string idUser { get; set; }
 
     [LoadColumn(2)]
-    public float Date { get; set; }
+    public string Date { get; set; }
 
     [LoadColumn(3)]
-    public float Hour { get; set; }
+    public string Hour { get; set; }
 
     [LoadColumn(4)]
     public float Import { get; set; }
 
     [LoadColumn(5)]
-    public float Country { get; set; }
+    public string Country { get; set; }
 
     [LoadColumn(6)]
-    public float Type { get; set; }
+    public string Type { get; set; }
 
     [LoadColumn(7)]
     public float NumTrans { get; set; }
 
     [LoadColumn(8)]
-    public float PayMethod { get; set; }
+    public string PayMethod { get; set; }
 
 }
 

@@ -25,26 +25,31 @@ IDataView dataView = mlContext.Data.LoadFromTextFile<TranData>(
 // así entrena el modelo solo con los valores funcionales. En mi caso, los anómalos son USR5621 (TXN005-007), USR4532 (TXN019-024), USR9103 (TXN029-030), USR7156 (TXN041-045)
 var trainingData = mlContext.Data.FilterRowsByColumn(
     dataView,
-    nameof(TranData.Minute),
+    nameof(TranData.idTran),
     upperBound: 30);
 
+var pipeline = mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "idUserOneHot", inputColumnName: nameof(TranData.idUser))
+    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "DateOneHot", inputColumnName: nameof(TranData.Date)))
+    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "HourOneHot", inputColumnName: nameof(TranData.Hour)))
+    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "CountyOneHot", inputColumnName: nameof(TranData.Country)))
+    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "TypeOneHot", inputColumnName: nameof(TranData.Type)))
+    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "PayMethodOneHot", inputColumnName: nameof(TranData.PayMethod)));
 
 ////////////////////////////////////
 ////// Pipeline de PROCESAMIENTO
 ////////////////////////////////////
-var preprocessingPipeline =
+var preprocessingPipeline = pipeline.Append(
     mlContext.Transforms.Concatenate("Features",
     [
-        nameof(TranData.idTran),
-        nameof(TranData.idUser),
-        nameof(TranData.Date),
-        nameof(TranData.Hour),
+        "idUserOneHot",
+        "DateOneHot",
+        "HourOneHot",
         nameof(TranData.Import),
-        nameof(TranData.Country),
-        nameof(TranData.Type),
+        "CountyOneHot",
+        "TypeOneHot",
         nameof(TranData.NumTrans),
-        nameof(TranData.PayMethod),
-    ])
+        "PayMethodOneHot",
+    ]))
     .Append(mlContext.Transforms.NormalizeMeanVariance("Features"));
 
 
@@ -97,7 +102,7 @@ foreach (var t in new[] { 0.30f, 0.45f, 0.60f, 0.50f })
     var scored = thresholdedModel.Transform(dataView);
 
     var count = mlContext.Data
-        .CreateEnumerable<TranData>(scored, reuseRowObject: false)
+        .CreateEnumerable<TranPrediction>(scored, reuseRowObject: false)
         .Count(r => r.PredictedLabel);
 
     Console.WriteLine($"Threshold {t:F2}: {count} anomalías detectadas");
@@ -108,22 +113,8 @@ foreach (var t in new[] { 0.30f, 0.45f, 0.60f, 0.50f })
 ////////////////////////////////////
 var predictions = model.Transform(dataView);
 
-
-////////////////////////////////////
-////// Medir el modelo
-////////////////////////////////////
-var metrics = mlContext.AnomalyDetection.Evaluate(
-    data: predictions,
-    labelColumnName: "Label",
-    scoreColumnName: "Score",
-    predictedLabelColumnName: "PredictedLabel",
-    falsePositiveCount: 5);
-
-Console.WriteLine($"AU ROC: {metrics.AreaUnderRocCurve:F4}");
-Console.WriteLine($"DR at FP=5: {metrics.DetectionRateAtFalsePositiveCount:F4}");
-
 // Creamos un enumerable, para poder visualizar
-var results = mlContext.Data.CreateEnumerable<HvacPrediction>(
+var results = mlContext.Data.CreateEnumerable<TranPrediction>(
     predictions,
     reuseRowObject: false);
 
