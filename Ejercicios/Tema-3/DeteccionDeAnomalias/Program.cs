@@ -28,28 +28,19 @@ var trainingData = mlContext.Data.FilterRowsByColumn(
     nameof(TranData.idTran),
     upperBound: 30);
 
-var pipeline = mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "idUserOneHot", inputColumnName: nameof(TranData.idUser))
-    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "DateOneHot", inputColumnName: nameof(TranData.Date)))
-    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "HourOneHot", inputColumnName: nameof(TranData.Hour)))
-    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "CountyOneHot", inputColumnName: nameof(TranData.Country)))
-    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "TypeOneHot", inputColumnName: nameof(TranData.Type)))
-    .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "PayMethodOneHot", inputColumnName: nameof(TranData.PayMethod)));
 
 ////////////////////////////////////
 ////// Pipeline de PROCESAMIENTO
 ////////////////////////////////////
-var preprocessingPipeline = pipeline.Append(
+var preprocessingPipeline = 
     mlContext.Transforms.Concatenate("Features",
     [
-        "idUserOneHot",
-        "DateOneHot",
-        "HourOneHot",
+        nameof(TranData.Date),
         nameof(TranData.Import),
-        "CountyOneHot",
-        "TypeOneHot",
         nameof(TranData.NumTrans),
-        "PayMethodOneHot",
-    ]))
+        nameof(TranData.LogImport),
+        nameof(TranData.ImportByTran)
+    ])
     .Append(mlContext.Transforms.NormalizeMeanVariance("Features"));
 
 
@@ -119,13 +110,14 @@ var results = mlContext.Data.CreateEnumerable<TranPrediction>(
     reuseRowObject: false);
 
 // Mostramos los datos con un formateo friendly
-Console.WriteLine("IDTran\tIDUser\tDate\tHour\tImport\tCountry\tType\tNumTrans\tMethod\tAnomaly\tScore");
+Console.WriteLine("IDTran\tDate\tImport\tNumTrans\tLogImport\tImportByTran\tMethod\tAnomaly\tScore");
 Console.WriteLine("-------------------------------------------------------------");
+
 
 foreach (var r in results)
 {
     Console.WriteLine(
-        $"{r.idTran}\t{r.idUser:F1}\t{r.Date:F1}\t{r.Hour:F0}\t{r.Import:F1}\t{r.Country}\t{r.Type:F1}\t{r.NumTrans:F1}\t{r.PayMethod:F0}\t" +
+        $"{r.idTran}\t{r.Date:F1}\t{r.Import:F1}\t{r.NumTrans:F1}\t{r.LogImport:F1}\t{r.ImportByTran:F1}\t" +
         $"{(r.PredictedLabel ? "🔴" : "🟢")}\t{r.Score:F4}");
 }
 
