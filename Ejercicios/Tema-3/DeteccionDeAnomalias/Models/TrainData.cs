@@ -2,29 +2,29 @@ using Microsoft.ML.Data;
 
 namespace DeteccionDeAnomalias.Models;
 
-public class TranData
+public class TrainData
 {
     [LoadColumn(0)]
-    public float idTran { get; set; }
+    public float indexTiempo { get; set; }
 
     [LoadColumn(1)]
-    public float Date { get; set; }
+    public float usoCPU { get; set; }
 
     [LoadColumn(2)]
-    public float Import { get; set; }
+    public float usoMemoria { get; set; }
 
     [LoadColumn(3)]
-    public float NumTrans { get; set; }
+    public float velVent { get; set; }
 
     [LoadColumn(2)]
-    public float LogImport { get; set; }
+    public float temperatura { get; set; }
 
     [LoadColumn(3)]
-    public float ImportByTran { get; set; }
+    public float label { get; set; }
 
 }
 
-public class TranPrediction : TranData
+public class TrainPrediction : TrainData
 {
     // true = anomalía
     public bool PredictedLabel { get; set; }

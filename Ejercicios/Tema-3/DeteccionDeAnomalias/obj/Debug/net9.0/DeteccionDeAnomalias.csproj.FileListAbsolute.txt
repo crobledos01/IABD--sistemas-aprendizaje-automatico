@@ -5,7 +5,6 @@ C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Eje
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\obj\Debug\net9.0\DeteccionDeAnomalias.sourcelink.json
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\obj\Debug\net9.0\DeteccionDeAnomalias.csproj.AssemblyReference.cache
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\bin\Debug\net9.0\DeteccionDeAnomalias.exe
-C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\bin\Debug\net9.0\transacciones.csv
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\bin\Debug\net9.0\DeteccionDeAnomalias.deps.json
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\bin\Debug\net9.0\DeteccionDeAnomalias.runtimeconfig.json
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\bin\Debug\net9.0\DeteccionDeAnomalias.dll
@@ -40,3 +39,4 @@ C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Eje
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\obj\Debug\net9.0\DeteccionDeAnomalias.pdb
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\obj\Debug\net9.0\DeteccionDeAnomalias.genruntimeconfig.cache
 C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\obj\Debug\net9.0\ref\DeteccionDeAnomalias.dll
+C:\Users\Administrador\Documents\carlos\IABD-sistemas-aprendizaje-automatico\Ejercicios\Tema-3\DeteccionDeAnomalias\bin\Debug\net9.0\server_monitoring.csv

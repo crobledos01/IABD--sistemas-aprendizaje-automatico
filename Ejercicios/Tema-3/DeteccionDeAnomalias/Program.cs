@@ -9,14 +9,14 @@ using DeteccionDeAnomalias.Models;
 
 var mlContext = new MLContext(seed: 1);
 
-const string DatasetPath = "transacciones.csv";
+const string DatasetPath = "server_monitoring.csv";
 
 
 ////////////////////////////////////
 ////// Cargamos los datos
 ////////////////////////////////////
 
-IDataView dataView = mlContext.Data.LoadFromTextFile<TranData>(
+IDataView dataView = mlContext.Data.LoadFromTextFile<TrainData>(
     path: DatasetPath,
     hasHeader: true,
     separatorChar: ',');
@@ -25,7 +25,7 @@ IDataView dataView = mlContext.Data.LoadFromTextFile<TranData>(
 // así entrena el modelo solo con los valores funcionales. En mi caso, los anómalos son USR5621 (TXN005-007), USR4532 (TXN019-024), USR9103 (TXN029-030), USR7156 (TXN041-045)
 var trainingData = mlContext.Data.FilterRowsByColumn(
     dataView,
-    nameof(TranData.idTran),
+    nameof(TrainData.indexTiempo),
     upperBound: 30);
 
 
@@ -35,11 +35,11 @@ var trainingData = mlContext.Data.FilterRowsByColumn(
 var preprocessingPipeline = 
     mlContext.Transforms.Concatenate("Features",
     [
-        nameof(TranData.Date),
-        nameof(TranData.Import),
-        nameof(TranData.NumTrans),
-        nameof(TranData.LogImport),
-        nameof(TranData.ImportByTran)
+        nameof(TrainData.usoCPU),
+        nameof(TrainData.usoMemoria),
+        nameof(TrainData.velVent),
+        nameof(TrainData.temperatura),
+        nameof(TrainData.label)
     ])
     .Append(mlContext.Transforms.NormalizeMeanVariance("Features"));
 
@@ -81,19 +81,19 @@ foreach (var t in new[] { 0.30f, 0.45f, 0.60f, 0.50f })
     var preproModel = model.Take(model.Count() - 1);
     var pca = (AnomalyPredictionTransformer<PcaModelParameters>)model.LastTransformer;
 
-    // Cambia el umbral SOLO del último transformer
+    // Cambia el umbral SOLO del último Trainsformer
     var pcaWithThreshold = mlContext.AnomalyDetection.ChangeModelThreshold(
         pca,
         threshold: t);
 
-    // Reconstruye la cadena sustituyendo el último transformer
+    // Reconstruye la cadena sustituyendo el último Trainsformer
     var thresholdedModel = model.Append(pcaWithThreshold);
 
     // Aplica el modelo con ese umbral
     var scored = thresholdedModel.Transform(dataView);
 
     var count = mlContext.Data
-        .CreateEnumerable<TranPrediction>(scored, reuseRowObject: false)
+        .CreateEnumerable<TrainPrediction>(scored, reuseRowObject: false)
         .Count(r => r.PredictedLabel);
 
     Console.WriteLine($"Threshold {t:F2}: {count} anomalías detectadas");
@@ -105,19 +105,19 @@ foreach (var t in new[] { 0.30f, 0.45f, 0.60f, 0.50f })
 var predictions = model.Transform(dataView);
 
 // Creamos un enumerable, para poder visualizar
-var results = mlContext.Data.CreateEnumerable<TranPrediction>(
+var results = mlContext.Data.CreateEnumerable<TrainPrediction>(
     predictions,
     reuseRowObject: false);
 
 // Mostramos los datos con un formateo friendly
-Console.WriteLine("IDTran\tDate\tImport\tNumTrans\tLogImport\tImportByTran\tMethod\tAnomaly\tScore");
+Console.WriteLine("indexTiempo\tusoCPU\tusoMemoria\tvelVent\ttemperatura\tlabel\tMethod\tAnomaly\tScore");
 Console.WriteLine("-------------------------------------------------------------");
 
 
 foreach (var r in results)
 {
     Console.WriteLine(
-        $"{r.idTran}\t{r.Date:F1}\t{r.Import:F1}\t{r.NumTrans:F1}\t{r.LogImport:F1}\t{r.ImportByTran:F1}\t" +
+        $"{r.indexTiempo}\t{r.usoCPU:F1}\t{r.usoMemoria:F1}\t{r.velVent:F1}\t{r.temperatura:F1}\t{r.label:F1}\t" +
         $"{(r.PredictedLabel ? "🔴" : "🟢")}\t{r.Score:F4}");
 }
 
