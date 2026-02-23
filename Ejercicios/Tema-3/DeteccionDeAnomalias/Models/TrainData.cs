@@ -16,10 +16,10 @@ public class TrainData
     [LoadColumn(3)]
     public float velVent { get; set; }
 
-    [LoadColumn(2)]
+    [LoadColumn(4)]
     public float temperatura { get; set; }
 
-    [LoadColumn(3)]
+    [LoadColumn(5)]
     public float label { get; set; }
 
 }
