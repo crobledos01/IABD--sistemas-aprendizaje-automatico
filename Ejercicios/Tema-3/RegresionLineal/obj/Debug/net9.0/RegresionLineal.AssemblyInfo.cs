@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RegresionLineal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b26dc19ad4df09648c78d3ef86b4d5d856b7356d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+790a13125b0ba3373769a39969ac9fd995a5c08e")]
 [assembly: System.Reflection.AssemblyProductAttribute("RegresionLineal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RegresionLineal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

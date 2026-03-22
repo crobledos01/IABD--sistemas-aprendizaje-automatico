@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Trainers;
 using RegresionLineal.Models;
 
 namespace RegresionLineal
@@ -27,6 +28,21 @@ namespace RegresionLineal
 
             var split = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
+            var sdcaOptions = new SdcaRegressionTrainer.Options
+            {
+                LabelColumnName = nameof(EnergyData.EnergyKWh),
+                FeatureColumnName = "Features",
+                L1Regularization = 1e-7f,
+                L2Regularization = 0.01f,
+                BiasLearningRate = 0.1f,
+                MaximumNumberOfIterations = 10,
+                LossFunction = new SquaredLoss(),
+                ConvergenceTolerance = 0.1f,
+                ConvergenceCheckFrequency = 2,
+                Shuffle = true,
+                NumberOfThreads = 2
+            };
+
             var pipeline =
                 mlContext.Transforms.CopyColumns("Label", nameof(EnergyData.EnergyKWh))
                 .Append(mlContext.Transforms.Concatenate("Features",
@@ -35,7 +51,7 @@ namespace RegresionLineal
                     nameof(EnergyData.PressureBar),
                     nameof(EnergyData.LoadPct),
                     nameof(EnergyData.Vibration)))
-                .Append(mlContext.Regression.Trainers.Sdca());
+                .Append(mlContext.Regression.Trainers.Sdca(sdcaOptions));
 
             var model = pipeline.Fit(split.TrainSet);
 
@@ -48,9 +64,10 @@ namespace RegresionLineal
 
             var testCases = new[]
             {
-                new EnergyData{TempC=24,HumidityPct=48,PressureBar=1.01f,LoadPct=62,Vibration=2.5f},
-                new EnergyData{TempC=30,HumidityPct=60,PressureBar=1.00f,LoadPct=80,Vibration=3.4f},
-                new EnergyData{TempC=18,HumidityPct=40,PressureBar=1.02f,LoadPct=50,Vibration=2.0f}
+                new EnergyData { TempC = 20, HumidityPct = 45, PressureBar = 1.010f, LoadPct = 35, Vibration = 1.80f },
+                new EnergyData { TempC = 22, HumidityPct = 50, PressureBar = 1.020f, LoadPct = 68, Vibration = 2.80f },
+                new EnergyData { TempC = 19, HumidityPct = 55, PressureBar = 1.035f, LoadPct = 95, Vibration = 3.90f },
+                new EnergyData { TempC = 23.23f, HumidityPct = 41.3f, PressureBar = 1.040f, LoadPct = 82.6f, Vibration = 3.20f }
             };
 
             Console.WriteLine("\n===== PREDICCIONES =====");
