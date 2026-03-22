@@ -133,7 +133,7 @@ var pipeline =
         beta: 0.1f,
         samplingStepCount: 4,
         maximumNumberOfIterations: 5000,
-        maximumTokenCountPerDocument: 7,
+        maximumTokenCountPerDocument: 5,
         numberOfSummaryTermsPerTopic: 5));
 
 // ==================================================
