@@ -1,7 +1,7 @@
 using Microsoft.ML.Data;
-namespace RegresionLineal.Models;
+namespace RegresionLogistica.Models;
 
-public class SystemData
+public class SensorData
 {
     [LoadColumn(0)]
     public float TempC { get; set; }
@@ -16,6 +16,6 @@ public class SystemData
     public float DeltaT { get; set; }
 
     [LoadColumn(4)]
-    public float IsAnomaly { get; set; }
+    public bool IsAnomaly { get; set; }
 
 }
