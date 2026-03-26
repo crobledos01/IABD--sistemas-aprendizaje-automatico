@@ -92,10 +92,6 @@ namespace RegresionLogistica
                 (CalibratedModelParametersBase<LinearBinaryModelParameters, PlattCalibrator>)modelNorm.LastTransformer.Model;
             ShowBiasAndWeights(logisticModelNorm);
 
-            // ============================
-            //        PREDICCIONES
-            // ============================
-
             var predictionEngine = mlContext.Model.CreatePredictionEngine<SensorData, ValuePrediction>(modelNorm);
 
             var testCases = new[]
@@ -178,8 +174,6 @@ namespace RegresionLogistica
     {
         [ColumnName("PredictedLabel")]
         public bool PredictedLabel { get; set; }
-        [ColumnName("Clase")]
-        public float Clase { get; set; }
         [ColumnName("Probability")]
         public float Probability { get; set; }
     }

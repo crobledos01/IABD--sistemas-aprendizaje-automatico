@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RegresionLogistica")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c8cfd94708e25f7881882d465c1fe0c55e9c87eb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e744c433c6e8a261c8a59228b8b53c424bdbc57d")]
 [assembly: System.Reflection.AssemblyProductAttribute("RegresionLogistica")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RegresionLogistica")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
