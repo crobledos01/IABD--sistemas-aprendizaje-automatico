@@ -55,7 +55,7 @@ namespace ensambles
 
             var fastForestPredictions = fastForestModel.Transform(testData);
 
-            var fastForestMetrics = mlContext.BinaryClassification.Evaluate(fastForestPredictions);
+            var fastForestMetrics = mlContext.BinaryClassification.EvaluateNonCalibrated(fastForestPredictions);
 
             // 5. LIGHTGBM
             var lightGbmOptions = new LightGbmBinaryTrainer.Options
@@ -126,7 +126,7 @@ public class CustomerData
     public bool SubscribedNewsletter { get; set; }
 
     [LoadColumn(5)]
-    public string Region { get; set; }
+    public string? Region { get; set; }
 
     [LoadColumn(6)]
     public bool Label { get; set; }
