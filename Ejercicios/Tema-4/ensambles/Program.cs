@@ -41,11 +41,11 @@ namespace ensambles
             // 4. FASTFOREST
             var fastForestOptions = new FastForestBinaryTrainer.Options
             {
-                NumberOfTrees = 50,
-                NumberOfLeaves = 20,
+                NumberOfTrees = 150,
+                NumberOfLeaves = 32,
                 MinimumExampleCountPerLeaf = 10,
-                FeatureFraction = 0.8,
-                FeatureFirstUsePenalty = 0.1
+                FeatureFraction = 0.8f,
+                FeatureFirstUsePenalty = 0.05f
             };
 
             var fastForestPipeline = preprocessingPipeline.Append(

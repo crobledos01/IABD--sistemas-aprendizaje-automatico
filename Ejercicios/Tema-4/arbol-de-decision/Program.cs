@@ -7,10 +7,9 @@ var estudiantes = new[] {
     new { estudia = false, duermeBien = false, entregaTareas = true, aprueba = false }
 };
 
-/*  De primeras, las mejores variables para empezar podrían ser "estudia" y "duermeBien", ya que en ambos casos hay un if que no
-encadenaría otro interior, mientras que "entregaTareas" tiene casos verdaderos y falsos con aprobados y suspensos
-Por último, me quedaría con "estudia" como la variable más importante, ya que tiene una relación más clara con el resultado
-*/
+// Las listas sirven para clasificar a los estudiantes según el resultado del árbol de decisión
+// El error se utiliza para verificar que no haya estudiantes mal clasificados,
+//en caso de que el árbol no fuese correcto saltaría un error al correr el código
 
 var aprobados = new List<dynamic>();
 var suspensos = new List<dynamic>();
@@ -56,6 +55,8 @@ if (aprobados.Count + suspensos.Count == estudiantes.Length && !error)
 {
     System.Console.WriteLine("Todos los estudiantes del primer grupo han sido clasificados correctamente.");
 }
+
+// Segunda prueba con duermeBien como primera pregunta para comprobar que se resuelve de la misma forma
 
 var aprobados2 = new List<dynamic>();
 var suspensos2 = new List<dynamic>();
