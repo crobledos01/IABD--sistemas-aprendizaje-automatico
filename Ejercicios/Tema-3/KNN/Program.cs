@@ -43,7 +43,10 @@ var testData = new List<DataPoint>
     new([4.2, 4.0], "Azul")
 };
 
+// El k igual a 4 hace que se tengan en cuenta los 4 puntos más cercanos para hacer la predicción
+// Se podría coger un número impar para que siempre haya mayoría y no tener que hacer un desempate por distancia, pero salen peor las métricas
 int k = 4;
+// Caso que las metricas utilizan como caso positivo para calcular le precisión. El valor que se elija no influye
 string positiveLabel = "Rojo";
 
 // ===============================
@@ -172,30 +175,33 @@ public class KNN
         return Math.Sqrt(sum);
     }
 
+    // Predice el valor que debería tener un punto en base a la distancia con el resto
     public string Predict(double[] newPoint, int k)
     {
-        if (k <= 0)
-            throw new ArgumentException("k debe ser mayor que 0.");
-
-        if (k > trainingData.Count)
-            throw new ArgumentException("k no puede ser mayor que el número de ejemplos de entrenamiento.");
-
         var prediction = trainingData
             .Select(p => new
             {
                 Label = p.Label,
+                // Se utiliza la distancia euclidiana para medir
+                // la distancia del nuevo puntoa cada uno de los puntos existentes
                 Distance = EuclideanDistance(p.Features, newPoint)
             })
+            // Ordena los valores por distancia al nuevo punto
             .OrderBy(x => x.Distance)
+            // Recoge los k valores más cercanos, en esta caso ka sería 4
             .Take(k)
+            // Agrupa los resultados por color
             .GroupBy(x => x.Label)
             .Select(g => new
             {
                 Label = g.Key,
                 Count = g.Count(),
+                // Si hay empate se usa la distancia promedio como desempate
                 AvgDistance = g.Average(x => x.Distance)
             })
+            // Ordena los colores por cantidad de veces que aparecen
             .OrderByDescending(x => x.Count)
+            // En caso de empate, coloca primero el color con la distancia media más baja
             .ThenBy(x => x.AvgDistance)
             .First();
 
