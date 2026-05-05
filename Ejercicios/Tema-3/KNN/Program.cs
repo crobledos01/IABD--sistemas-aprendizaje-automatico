@@ -99,9 +99,14 @@ var testMl = testData.Select(p => new ModelInput
 IDataView trainDataView = mlContext.Data.LoadFromEnumerable(trainMl);
 IDataView testDataView = mlContext.Data.LoadFromEnumerable(testMl);
 
-var pipeline = mlContext.BinaryClassification.Trainers.LinearSvm(
-    labelColumnName: "Label",
-    featureColumnName: "Features");
+// Se normalizan las features para que el modelo gane precisión
+// El número de interacciones es alto ya que el modelo tiene pocos datos y así el modelo los aprende mejor, he dejado el
+// valor con el que he conseguido que el resultado sea perfecto intentando no realizar interacciones de más 
+var pipeline = mlContext.Transforms.NormalizeMinMax("Features")
+    .Append(mlContext.BinaryClassification.Trainers.LinearSvm(
+        labelColumnName: "Label",
+        featureColumnName: "Features",
+        numberOfIterations: 200));
 
 var model = pipeline.Fit(trainDataView);
 var predictions = model.Transform(testDataView);
