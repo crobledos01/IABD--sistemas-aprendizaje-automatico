@@ -1,0 +1,39 @@
+behaviors:
+  CollectorAgent:
+    trainer_type: ppo
+    hyperparameters:
+      # 1: 64, 2: 64, 3: 96, 4: 96, 5: 96, 6: 96, 7: 96, 8: 96, 9: 96, 10: 96
+      batch_size: 96
+      # 1: 2048, 2: 2048, 3: 3072, 4: 2048, 5: 2048, 6: 2048, 7: 2048, 8: 2048, 9: 2096, 10: 2096
+      buffer_size: 2048
+      # 1: 0.0003, 2: 0.0003, 3: 0.0003, 4:0.0002, 5: 0.0002, 6: 0.0002, 7: 0.0002, 8: 0.00025, 9: 0.0002, 10: 0.00025
+      learning_rate: 0.0002
+      beta: 0.005
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: true
+      # 1: 128, 2: 128, 3: 128, 4:152, 5: 170, 6: 170, 7: 184, 8: 184, 9: 184, 10: 184
+      hidden_units: 184
+      # 1: 2, 2: 3, 3: 3, 4: 3, 5: 3, 6: 4, 7: 3, 8: 3, 9: 3, 10: 3
+      num_layers: 3
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+    max_steps: 40000
+    time_horizon: 64
+    summary_freq: 2000
+
+# 1: Mean Reward: -0.616. Std of Reward: 0.795.
+# 2: Mean Reward:  6.876. Std of Reward: 1.566.
+# 3: Mean Reward:  5.430. Std of Reward: 1.398.
+# 4: Mean Reward:  7.675. Std of Reward: 1.250.
+# 5: Mean Reward:  8.073. Std of Reward: 0.998.
+# 6: Mean Reward:  7.730. Std of Reward: 1.065.
+# 7: Mean Reward:  8.190. Std of Reward: 0.858. <---- Estos son los resultados de los valores finales que he dejado en el archivo
+# 8: Mean Reward:  6.773. Std of Reward: 1.372.
+# 9: Mean Reward:  7.906. Std of Reward: 1.190.
+# 10: Mean Reward: 6.250. Std of Reward: 1.750.

@@ -4,10 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// ===============================
-// DATOS DE ENTRENAMIENTO Y TEST
-// ===============================
-
 var trainingData = new List<DataPoint>
 {
     new([1.0, 1.0], "Rojo"),
@@ -49,9 +45,7 @@ int k = 4;
 // Caso que las metricas utilizan como caso positivo para calcular le precisión. El valor que se elija no influye
 string positiveLabel = "Rojo";
 
-// ===============================
 // PARTE 1: KNN
-// ===============================
 
 Console.WriteLine("===== KNN =====");
 
@@ -76,9 +70,7 @@ Console.WriteLine($"F1 Score: {knnMetrics.F1():F2}");
 
 Console.WriteLine();
 
-// ===============================
 // PARTE 2: SVM CON ML.NET
-// ===============================
 
 Console.WriteLine("===== SVM (ML.NET - LinearSvm) =====");
 
@@ -129,9 +121,7 @@ if (svmMetrics.ConfusionMatrix != null)
     Console.WriteLine(svmMetrics.ConfusionMatrix.GetFormattedConfusionTable());
 }
 
-// ===============================
 // PARTE 3: COMPARACIÓN
-// ===============================
 
 Console.WriteLine();
 Console.WriteLine("===== COMPARACIÓN FINAL =====");
